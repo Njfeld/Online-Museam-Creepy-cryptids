@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creepy Cryptids Art Museum</title>
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Inter', sans-serif; /* Fallback to sans-serif if Inter is not available */
+            background-color: #1a202c; /* Dark background for creepy theme */
+            color: #e2e8f0; /* Light text for contrast */
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 2rem; /* Equivalent to py-8 */
+            padding-left: 1rem; /* Equivalent to px-4 */
+            padding-right: 1rem; /* Equivalent to px-4 */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        /* Custom Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6a768f;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            margin-bottom: 3rem; /* Equivalent to mb-12 */
+        }
+
+        header h1 {
+            font-size: 3rem; /* Base for text-5xl */
+            line-height: 1.2;
+            font-weight: 800; /* font-extrabold */
+            color: #a78bfa; /* text-purple-400 */
+            margin-bottom: 1rem; /* mb-4 */
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 0.5rem; /* p-2 */
+        }
+
+        header p {
+            font-size: 1.25rem; /* text-xl */
+            color: #9ca3af; /* text-gray-400 */
+        }
+
+        /* Gallery Section */
+        main#gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+            gap: 2rem; /* gap-8 */
+            max-width: 80rem; /* max-w-7xl */
+            width: 100%;
+        }
+
+        /* Gallery Item Styling */
+        .gallery-item {
+            background-color: #2d3748; /* bg-gray-800 */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 15px rgba(0, 0, 0, 0.1); /* shadow-lg */
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03); /* hover:scale-105 */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 12rem; /* h-48 */
+            object-fit: cover;
+            border-top-left-radius: 0.75rem; /* rounded-t-xl */
+            border-top-right-radius: 0.75rem; /* rounded-t-xl */
+        }
+
+        .gallery-item h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #e2e8f0; /* text-gray-200 */
+            padding: 1rem; /* p-4 */
+            text-align: center;
+        }
+
+        /* Modal Overlay Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Darker overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: #2d3748; /* Darker background for modal */
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close-button:hover {
+            color: #cbd5e0;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            max-height: 70vh; /* max-h-[70vh] */
+            object-fit: contain;
+            border-radius: 0.5rem; /* rounded-lg */
+            margin-bottom: 1rem; /* mb-4 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* shadow-lg */
+        }
+
+        .modal-content h2 {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #b39cf5; /* text-purple-300 */
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+
+        .modal-content p {
+            font-size: 1.125rem; /* text-lg */
+            color: #d1d5db; /* text-gray-300 */
+        }
+
+        /* Footer Styling */
+        footer {
+            margin-top: 4rem; /* mt-16 */
+            text-align: center;
+            color: #9ca3af; /* text-gray-500 */
+            font-size: 0.875rem; /* text-sm */
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 640px) { /* sm breakpoint */
+            header h1 {
+                font-size: 3.75rem; /* md:text-6xl */
+            }
+            main#gallery {
+                grid-template-columns: repeat(2, 1fr); /* sm:grid-cols-2 */
+            }
+        }
+
+        @media (min-width: 768px) { /* md breakpoint */
+            main#gallery {
+                grid-template-columns: repeat(3, 1fr); /* md:grid-cols-3 */
+            }
+        }
+
+        @media (min-width: 1024px) { /* lg breakpoint */
+            main#gallery {
+                grid-template-columns: repeat(4, 1fr); /* lg:grid-cols-4 */
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="min-h-screen flex flex-col items-center py-8 px-4">
+        <!-- Header Section -->
+        <header>
+            <h1>Creepy Cryptids Art Museum</h1>
+            <p>Explore the mysterious and unsettling world of legendary creatures.</p>
+        </header>
+
+        <!-- Gallery Section -->
+        <main id="gallery">
+            <!-- Gallery items will be dynamically inserted here by JavaScript -->
+        </main>
+
+        <!-- Modal Overlay -->
+        <div id="imageModal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="modal-close-button" aria-label="Close modal">&times;</button>
+                <img id="modalImage" src="" alt="Cryptid Artwork">
+                <h2 id="modalTitle"></h2>
+                <p id="modalDescription"></p>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <footer>
+            <p>&copy; 2025 Creepy Cryptids Museum. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Array of cryptid artwork data
+        // IMPORTANT: Ensure your image files are in the SAME FOLDER as this HTML file.
+        // The 'src' paths below are relative to the HTML file's location.
+        const cryptidArtworks = [
+            {
+                id: 'gallows-fowl',
+                name: 'Gallows Fowl',
+                src: 'Gemini_Generated_Image_Gallows-Fowl.png',
+                description: 'A skeletal raven perched on a barren tree branch under a full moon, embodying a haunting and ominous presence. (produced by Gemini)'
+            },
+            {
+                id: 'grave-wraith',
+                name: 'Grave Wraith',
+                src: 'Gemini_Generated_Image_Grave-Wraith.png',
+                description: 'A gaunt, shadowy figure with glowing eyes and long, sharp claws, emerging from a dark, eerie forest. (produced by Gemini)'
+            },
+            {
+                id: 'ink-blight',
+                name: 'Ink Blight',
+                src: 'Gemini_Generated_Image_Ink-Blight..png',
+                description: 'A slender, horned creature with glowing eyes and thorny protrusions, standing ominously within a shadowy forest. (produced by Gemini)'
+            },
+            {
+                id: 'mosaic-arachnid',
+                name: 'Mosaic Arachnid',
+                src: 'Gemini_Generated_Image_Mosaic-Arachnid.png',
+                description: 'A multi-eyed, segmented spider-like creature rendered in a stained-glass mosaic style, with vibrant blues and reds. (produced by Gemini)'
+            },
+            {
+                id: 'murky-mire-spirit',
+                name: 'The Murky Mire Spirit',
+                src: 'Gemini_Generated_Image_The Murky-Mire-Spirit..png',
+                description: 'A swamp creature with glowing yellow eyes and spiky hair, its elongated limbs and shadowy form blending into a misty, overgrown environment. (produced by Gemini)'
+            },
+            {
+                id: 'the-fifth',
+                name: 'The Fifth',
+                src: 'Gemini_Generated_Image_the-fifth.png',
+                description: 'A grotesque, bat-eared creature with sharp teeth and glowing eyes, peering menacingly from behind a tree in a dark forest. (produced by Gemini)'
+            },
+            {
+                id: 'glitch-beast',
+                name: 'The Glitch Beast',
+                src: 'Gemini_Generated_Image_The-Glitch-Beast.png',
+                description: 'A pixelated, bird-headed monster with red eyes and long, clawed limbs, depicted in a spooky forest setting. (produced by Gemini)'
+            },
+            {
+                id: 'gloom-stalker',
+                name: 'The Gloom Stalker',
+                src: 'Gemini_Generated_Image_The-Gloom-Stalker.png',
+                description: 'A demonic creature with glowing red eyes, sharp horns, and spiky skin, lurking in a dark, moonlit forest. (produced by Gemini)'
+            },
+            {
+                id: 'mire-beast',
+                name: 'The Mire Beast',
+                src: 'Gemini_Generated_Image_The-Mire-Beast.png',
+                description: 'A terrifying swamp monster with prominent red eyes, sharp teeth, and spiky protrusions, emerging from murky waters. (produced by Gemini)'
+            },
+            {
+                id: 'ocular-bloom',
+                name: 'The Ocular Bloom',
+                src: 'Gemini_Generated_Image_The-Ocular-Bloom.png',
+                description: 'A monstrous, multi-eyed creature with tentacles, set against an alien landscape under a cosmic sky, evoking a sense of cosmic horror. (produced by Gemini)'
+            }
+        ];
+
+        // Get references to DOM elements
+        const gallery = document.getElementById('gallery');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalCloseButton = document.querySelector('.modal-close-button');
+
+        /**
+         * Dynamically generates the gallery items based on the cryptidArtworks array.
+         */
+        function createGallery() {
+            cryptidArtworks.forEach(artwork => {
+                // Create the main container for each gallery item
+                const galleryItem = document.createElement('div');
+                galleryItem.classList.add('gallery-item'); // Apply base styling from CSS
+                galleryItem.dataset.id = artwork.id; // Store the artwork ID for easy lookup
+
+                // Create the image element
+                const img = document.createElement('img');
+                img.src = artwork.src;
+                img.alt = artwork.name;
+                // No Tailwind classes here, styling handled by CSS rules for .gallery-item img
+                img.onerror = function() {
+                    console.error("Failed to load image:", this.src);
+                    this.src = "https://placehold.co/400x300/2d3748/e2e8f0?text=Image+Not+Found"; // Fallback placeholder
+                };
+
+
+                // Create the title element for the artwork
+                const title = document.createElement('h3');
+                // No Tailwind classes here, styling handled by CSS rules for .gallery-item h3
+                title.textContent = artwork.name;
+
+                // Append image and title to the gallery item
+                galleryItem.appendChild(img);
+                galleryItem.appendChild(title);
+
+                // Add click event listener to open the modal
+                galleryItem.addEventListener('click', () => openModal(artwork.id));
+
+                // Append the gallery item to the main gallery container
+                gallery.appendChild(galleryItem);
+            });
+        }
+
+        /**
+         * Opens the modal with the details of the selected artwork.
+         * @param {string} artworkId - The ID of the artwork to display.
+         */
+        function openModal(artworkId) {
+            const artwork = cryptidArtworks.find(art => art.id === artworkId);
+            if (artwork) {
+                modalImage.src = artwork.src;
+                modalImage.alt = artwork.name;
+                modalTitle.textContent = artwork.name;
+                modalDescription.textContent = artwork.description;
+                imageModal.classList.add('active'); // Activate the modal overlay
+            }
+        }
+
+        /**
+         * Closes the modal.
+         */
+        function closeModal() {
+            imageModal.classList.remove('active'); // Deactivate the modal overlay
+        }
+
+        // Event listeners for closing the modal
+        modalCloseButton.addEventListener('click', closeModal);
+        imageModal.addEventListener('click', (event) => {
+            // Close modal if clicking on the overlay itself, not the content
+            if (event.target === imageModal) {
+                closeModal();
+            }
+        });
+
+        // Initialize the gallery when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', createGallery);
+    </script>
+</body>
+</html>
